@@ -89,19 +89,11 @@ func Run(envFilePath string, args []string) error {
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
 
-		if resp.StatusCode != 200 {
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return fmt.Errorf("Unexpected error setting project secrets: %w", err)
-			}
-
-			// TODO: remove the StatusOK case after 2022-08-20
-			if resp.StatusCode() != http.StatusCreated && resp.StatusCode() != http.StatusOK {
-				return errors.New("Unexpected error setting project secrets: " + string(resp.Body))
-			}
+		if resp.StatusCode != http.StatusCreated  && resp.StatusCode() != http.StatusOK {
+			return errors.New("Unexpected error setting project secrets: " + string(resp.Body))
 		}
+		defer resp.Body.Close()
 	}
 	fmt.Println("Finished " + utils.Aqua("supabase secrets set") + ".")
 	return nil
