@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"io"
 
 	"github.com/joho/godotenv"
 	"github.com/supabase/cli/internal/utils"
@@ -89,15 +90,13 @@ func Run(envFilePath string, args []string) error {
 			return err
 		}
 
-		buf := new(bytes.Buffer)
-		if buf == nil {
-			return errors.New("Could not create buffer.")
+		body, err := io.ReadAll(resp.Body)
+		if(err != nil) {
+			return errors.New("Error reading response body: " + err.Error())
 		}
-		buf.ReadFrom(resp.Body)
-		bodyStr := buf.String()
 
 		if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
-			return errors.New("Unexpected error setting project secrets: " + bodyStr)
+			return errors.New("Unexpected error setting project secrets: " + string(body))
 		}
 		defer resp.Body.Close()
 	}
