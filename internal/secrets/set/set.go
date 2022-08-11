@@ -102,7 +102,7 @@ func Run(envFilePath string, args []string) error {
 				return errors.New("Unexpected error setting project secrets: " + string(resp.Body))
 			}
 		}
-
+	}
 	fmt.Println("Finished " + utils.Aqua("supabase secrets set") + ".")
 	return nil
 }
