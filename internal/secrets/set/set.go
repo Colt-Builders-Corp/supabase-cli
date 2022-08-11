@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strings"
+	"io"
 
 	"github.com/joho/godotenv"
 	"github.com/supabase/cli/internal/utils"
@@ -89,18 +89,17 @@ func Run(envFilePath string, args []string) error {
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
 
-		if resp.StatusCode != 200 {
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return fmt.Errorf("Unexpected error setting project secrets: %w", err)
-			}
+		body, err := io.ReadAll(resp.Body)
+		if(err != nil) {
+			return errors.New("Error reading response body: " + err.Error())
+		}
 
+		if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
 			return errors.New("Unexpected error setting project secrets: " + string(body))
 		}
+		defer resp.Body.Close()
 	}
-
 	fmt.Println("Finished " + utils.Aqua("supabase secrets set") + ".")
 	return nil
 }
