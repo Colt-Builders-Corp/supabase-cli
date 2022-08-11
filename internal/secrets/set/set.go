@@ -90,6 +90,9 @@ func Run(envFilePath string, args []string) error {
 		}
 
 		buf := new(bytes.Buffer)
+		if buf == nil {
+			return errors.New("Could not create buffer.")
+		}
 		buf.ReadFrom(resp.Body)
 		bodyStr := buf.String()
 
